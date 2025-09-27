@@ -1,0 +1,9 @@
+pip install ollama streamlit {tải thư viện}
+
+Truy cập ollama.com/download, tải và cài đặt {tải ứng dụng}
+
+ollama --version {kiểm tra phiên bản}
+
+ollama pull deepseek-v3.1:671b-cloud {tải model của ollama về máy do bản cloud nên chỉ cần 405B}
+
+streamlit run [đường dẫn file chatbox.py]
