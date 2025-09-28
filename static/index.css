@@ -1,0 +1,75 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+#chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #f8f9fa;
+}
+
+.message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 20px;
+    max-width: 80%;
+    position: relative;
+}
+
+.user {
+    background-color: #dcf8c6;
+    align-self: flex-end;
+    margin-left: auto;
+    flex-direction: row-reverse;
+    /* Icon bên phải cho user */
+}
+
+.assistant {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    align-self: flex-start;
+    margin-right: auto;
+    flex-direction: row;
+    /* Icon bên trái cho assistant */
+}
+
+.icon {
+    font-size: 1.5em;
+    margin: 0 10px;
+    /* Margin để icon nằm trong bubble */
+    flex-shrink: 0;
+    /* Không co lại */
+}
+
+.text-content {
+    flex: 1;
+    /* Chiếm hết không gian còn lại */
+    word-break: break-word;
+    /* Đảm bảo nội dung không tràn */
+}
+
+.chat-input {
+    padding: 10px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+}
+
+#user-input {
+    border-radius: 50px;
+}
+
+#send-button {
+    border-radius: 50px;
+}

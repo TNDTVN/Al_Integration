@@ -1,5 +1,7 @@
 pip install ollama streamlit {tải thư viện}
 
+pip install flask
+
 Truy cập ollama.com/download, tải và cài đặt {tải ứng dụng}
 
 ollama --version {kiểm tra phiên bản}
