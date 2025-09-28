@@ -2,72 +2,233 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatMessages = document.getElementById('chat-messages');
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
+    const welcomeMessage = document.querySelector('.welcome-message');
+    
+    let isFirstMessage = true;
 
-    // Scroll xuống dưới cùng khi load (cho lịch sử)
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    // Scroll xuống dưới cùng khi load
+    scrollToBottom();
 
+    // Event listeners
     sendButton.addEventListener('click', sendMessage);
     userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
     });
 
-    function sendMessage() {
-        const prompt = userInput.value.trim();
-        if (!prompt) return;
+    // Gợi ý nhanh từ welcome message và suggestions
+    setupQuickPrompts();
 
-        // Thêm user message vào UI với icon
-        addMessage('user', prompt);
-        userInput.value = '';
+    // Auto-focus input
+    userInput.focus();
 
-        // Gửi request đến API và stream response
-        fetch('/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt })
-        })
-        .then(response => {
-            if (!response.body) throw new Error('No stream available');
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let assistantMessage = null;
-
-            // Thêm assistant message placeholder với icon
-            assistantMessage = addMessage('assistant', '');
-
-            return reader.read().then(function processText({ done, value }) {
-                if (done) return;
-
-                const chunk = decoder.decode(value);
-                assistantMessage.innerHTML += chunk.replace(/\n/g, '<br>');  // Hiển thị từng từ/chunk
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                return reader.read().then(processText);
+    function setupQuickPrompts() {
+        // Gợi ý từ topic tags
+        const topicTags = document.querySelectorAll('.topic-tag');
+        topicTags.forEach(tag => {
+            tag.addEventListener('click', () => {
+                const prompt = tag.getAttribute('data-prompt');
+                sendQuickPrompt(prompt);
             });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            addMessage('assistant', 'Lỗi kết nối server.');
+        });
+
+        // Gợi ý từ suggestions
+        const suggestions = document.querySelectorAll('.suggestion');
+        suggestions.forEach(suggestion => {
+            suggestion.addEventListener('click', () => {
+                const prompt = suggestion.getAttribute('data-prompt');
+                sendQuickPrompt(prompt);
+            });
         });
     }
 
-    function addMessage(role, content) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', role);
-
-        const icon = document.createElement('i');
-        icon.classList.add('icon', 'bi');
-        icon.classList.add(role === 'user' ? 'bi-person-circle' : 'bi-robot');
-
-        const text = document.createElement('span');
-        text.classList.add('text-content');
-        text.innerHTML = content;
-
-        messageDiv.appendChild(icon);
-        messageDiv.appendChild(text);
-
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-
-        return text;  // Trả về phần text để append stream
+    function sendQuickPrompt(prompt) {
+        userInput.value = prompt;
+        sendMessage();
     }
+
+    async function sendMessage() {
+        const prompt = userInput.value.trim();
+        if (!prompt) return;
+
+        // Ẩn welcome message sau khi gửi tin nhắn đầu tiên
+        if (isFirstMessage && welcomeMessage) {
+            welcomeMessage.style.display = 'none';
+            isFirstMessage = false;
+        }
+
+        // Vô hiệu hóa input và button
+        setInputState(false);
+
+        // Thêm user message vào UI
+        addMessage('user', prompt);
+        userInput.value = '';
+
+        // Hiển thị loading indicator (sau user message)
+        const loadingElement = showLoading();
+
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Lỗi server: ${response.statusText}`);
+            }
+
+            // Ẩn loading indicator
+            hideLoading(loadingElement);
+
+            // Lấy response text
+            const text = await response.text();
+            
+            // Thêm assistant message với hiệu ứng typewriter
+            await addAssistantMessageWithTypewriter(text);
+
+        } catch (error) {
+            console.error('Error:', error);
+            hideLoading(loadingElement);
+            addMessage('assistant', '❌ Lỗi kết nối server. Vui lòng thử lại.');
+        } finally {
+            // Kích hoạt lại input và button
+            setInputState(true);
+            userInput.focus();
+        }
+    }
+
+    function addMessage(role, content, isMarkdown = true) {
+    const messageRow = document.createElement('div');
+    messageRow.className = `message-row ${role}-row`;
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message`;
+
+    const avatar = document.createElement('div');
+    avatar.className = 'message-avatar';
+    avatar.innerHTML = `<i class="bi ${role === 'user' ? 'bi-person-fill' : 'bi-robot'}"></i>`;
+
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'message-text';
+    textDiv.innerHTML = isMarkdown ? marked.parse(content) : content;
+
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'message-time';
+    timeDiv.textContent = getCurrentTime();
+
+    messageContent.appendChild(textDiv);
+    messageContent.appendChild(timeDiv);
+
+    messageDiv.appendChild(avatar);
+    messageDiv.appendChild(messageContent);
+    messageRow.appendChild(messageDiv);
+    
+    // Thêm message vào cuối chat
+    chatMessages.appendChild(messageRow);
+
+    scrollToBottom();
+    return messageRow;
+}
+
+function showLoading() {
+    const loadingRow = document.createElement('div');
+    loadingRow.className = 'loading-row';
+
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'loading-indicator';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'loading-avatar';
+    avatar.innerHTML = '<i class="bi bi-robot"></i>';
+
+    const loadingContent = document.createElement('div');
+    loadingContent.className = 'loading-content';
+
+    const typingIndicator = document.createElement('div');
+    typingIndicator.className = 'typing-indicator';
+    typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+
+    loadingContent.appendChild(typingIndicator);
+    loadingDiv.appendChild(avatar);
+    loadingDiv.appendChild(loadingContent);
+    loadingRow.appendChild(loadingDiv);
+    
+    // Thêm loading sau message user mới nhất
+    chatMessages.appendChild(loadingRow);
+
+    scrollToBottom();
+    return loadingRow;
+}
+
+    function hideLoading(loadingElement) {
+        if (loadingElement) {
+            loadingElement.remove();
+        }
+    }
+
+    async function addAssistantMessageWithTypewriter(content) {
+        // Thêm assistant message
+        const messageRow = addMessage('assistant', '', false);
+        const textDiv = messageRow.querySelector('.message-text');
+
+        // Hiệu ứng typewriter
+        await typewriterEffect(textDiv, content);
+        scrollToBottom();
+    }
+
+    async function typewriterEffect(element, text) {
+        const words = text.split(' ');
+        let currentText = '';
+
+        for (let i = 0; i < words.length; i++) {
+            currentText += words[i] + ' ';
+            element.innerHTML = marked.parse(currentText);
+            
+            // Scroll đến phần tử mới nhất
+            scrollToBottom();
+            
+            // Random delay để tạo hiệu ứng tự nhiên
+            await delay(Math.random() * 50 + 25);
+        }
+    }
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function setInputState(enabled) {
+        userInput.disabled = !enabled;
+        sendButton.disabled = !enabled;
+        
+        if (enabled) {
+            sendButton.innerHTML = '<i class="bi bi-send-fill"></i>';
+        } else {
+            sendButton.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+        }
+    }
+
+    function scrollToBottom() {
+        setTimeout(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 100);
+    }
+
+    function getCurrentTime() {
+        return new Date().toLocaleTimeString('vi-VN', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+    }
+
+    // Auto-resize input
+    userInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
 });

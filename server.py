@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, session, Response
 import ollama
+import time  # Để simulate stream nếu cần
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'  # Để lưu session
@@ -36,28 +37,38 @@ def chat():
     # Thêm user message vào session
     session['messages'].append({"role": "user", "content": prompt})
 
-    # Copy messages để sử dụng trong generator (tránh lỗi context)
+    # Copy messages để sử dụng
     messages_copy = session['messages'][:]
 
-    def generate_response():
-        # Gọi Ollama với stream
-        stream = ollama.chat(
+    try:
+        # Gọi Ollama non-stream để lấy full response trước
+        full_response_data = ollama.chat(
             model="deepseek-v3.1:671b-cloud",
             messages=messages_copy,
-            stream=True
+            stream=False
         )
-        full_response = ""
-        for chunk in stream:
-            content = chunk['message']['content']
-            full_response += content
-            yield content  # Stream từng chunk (từng từ hoặc cụm)
+        full_response = full_response_data['message']['content']
 
-        # Thêm full response vào session sau khi hoàn tất
+        # Append full response vào session ngay (trong request context)
         session['messages'].append(
             {"role": "assistant", "content": full_response})
 
-    return Response(generate_response(), mimetype='text/plain')
+        def generate_response():
+            # Simulate stream bằng cách yield từng từ, giữ nguyên xuống dòng
+            # Split theo khoảng trắng và giữ \n
+            parts = full_response.split('\n')
+            for i, part in enumerate(parts):
+                words = part.split()
+                for word in words:
+                    yield word + ' '
+                    time.sleep(0.05)  # Delay nhỏ để simulate typing
+                if i < len(parts) - 1:  # Thêm \n giữa các dòng
+                    yield '\n'
+
+        return Response(generate_response(), mimetype='text/plain')
+    except Exception as e:
+        return jsonify({'error': f'Lỗi kết nối server: {str(e)}'}), 500
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)  # Tắt debug để tránh lỗi log không cần thiết
