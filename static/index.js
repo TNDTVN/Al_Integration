@@ -80,14 +80,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`Lỗi server: ${response.statusText}`);
             }
 
-            // Ẩn loading indicator
-            hideLoading(loadingElement);
+            // Xử lý response như stream
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullText = '';
+            let messageRow = null; // Để lưu assistant message row
+            let textDiv = null; // Để append chunks
 
-            // Lấy response text
-            const text = await response.text();
-            
-            // Thêm assistant message với hiệu ứng typewriter
-            await addAssistantMessageWithTypewriter(text);
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value);
+                fullText += chunk;
+
+                // Nếu chunk đầu tiên đến, ẩn loading và tạo assistant message
+                if (!messageRow) {
+                    hideLoading(loadingElement);
+                    messageRow = addMessage('assistant', '', false);
+                    textDiv = messageRow.querySelector('.message-text');
+                }
+
+                // Append chunk vào UI và parse markdown
+                textDiv.innerHTML = marked.parse(fullText);
+                scrollToBottom();
+            }
+
+            // Sau khi hết stream, thêm hiệu ứng typewriter nếu cần (nhưng vì stream đã gradual, có thể bỏ nếu muốn nhanh hơn)
 
         } catch (error) {
             console.error('Error:', error);
@@ -172,31 +191,9 @@ function showLoading() {
         }
     }
 
-    async function addAssistantMessageWithTypewriter(content) {
-        // Thêm assistant message
-        const messageRow = addMessage('assistant', '', false);
-        const textDiv = messageRow.querySelector('.message-text');
+    // Bỏ hàm addAssistantMessageWithTypewriter vì giờ dùng stream trực tiếp
 
-        // Hiệu ứng typewriter
-        await typewriterEffect(textDiv, content);
-        scrollToBottom();
-    }
-
-    async function typewriterEffect(element, text) {
-        const words = text.split(' ');
-        let currentText = '';
-
-        for (let i = 0; i < words.length; i++) {
-            currentText += words[i] + ' ';
-            element.innerHTML = marked.parse(currentText);
-            
-            // Scroll đến phần tử mới nhất
-            scrollToBottom();
-            
-            // Random delay để tạo hiệu ứng tự nhiên
-            await delay(Math.random() * 50 + 25);
-        }
-    }
+    // Bỏ typewriterEffect vì stream đã xử lý gradual append
 
     function delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
