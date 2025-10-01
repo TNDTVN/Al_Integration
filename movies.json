@@ -1,0 +1,258 @@
+[
+    {
+        "title": "Titanic",
+        "genre": "Tình cảm",
+        "rating": 8.8,
+        "description": "Câu chuyện tình yêu định mệnh trên con tàu Titanic huyền thoại.",
+        "view_count": 1500000,
+        "image_name": "titanic_poster.jpeg"
+    },
+    {
+        "title": "Kong: Skull Island",
+        "genre": "Hành động, Phiêu lưu",
+        "rating": 6.7,
+        "description": "Cuộc phiêu lưu đầy kịch tính với quái vật khổng lồ trên đảo sương mù.",
+        "view_count": 900000,
+        "image_name": "kong_skull_island_poster.jpg"
+    },
+    {
+        "title": "Parasite",
+        "genre": "Kinh dị, Hài",
+        "rating": 8.5,
+        "description": "Câu chuyện gia đình nghèo trà trộn vào nhà giàu, đầy bất ngờ và kịch tính.",
+        "view_count": 1100000,
+        "image_name": "parasite_poster.jpg"
+    },
+    {
+        "title": "Cô Gái Đến Từ Hôm Qua",
+        "genre": "Tình cảm, Hài",
+        "rating": 7.2,
+        "description": "Hành trình tình yêu tuổi học trò đầy hoài niệm của một chàng trai Việt Nam.",
+        "view_count": 600000,
+        "image_name": "co_gai_den_tu_hom_qua_poster.jpeg"
+    },
+    {
+        "title": "Avengers: Endgame",
+        "genre": "Hành động, Khoa học viễn tưởng",
+        "rating": 8.4,
+        "description": "Trận chiến cuối cùng đầy cảm xúc của các siêu anh hùng Avengers.",
+        "view_count": 2500000,
+        "image_name": "avengers_endgame_poster.jpg"
+    },
+    {
+        "title": "Inception",
+        "genre": "Hành động, Tâm lý",
+        "rating": 8.7,
+        "description": "Một thế giới giấc mơ phức tạp với những tầng lớp tâm trí.",
+        "view_count": 2000000,
+        "image_name": "inception_poster.jpg"
+    },
+    {
+        "title": "Interstellar",
+        "genre": "Khoa học viễn tưởng, Phiêu lưu",
+        "rating": 8.6,
+        "description": "Hành trình vượt qua hố đen để tìm kiếm hy vọng cho loài người.",
+        "view_count": 1700000,
+        "image_name": "interstellar_poster.jpg"
+    },
+    {
+        "title": "Joker",
+        "genre": "Tâm lý, Hình sự",
+        "rating": 8.5,
+        "description": "Chân dung bi kịch của một người đàn ông trở thành kẻ phản diện.",
+        "view_count": 1400000,
+        "image_name": "joker_poster.jpg"
+    },
+    {
+        "title": "The Dark Knight",
+        "genre": "Hành động, Hình sự",
+        "rating": 9.0,
+        "description": "Batman đối đầu Joker trong cuộc chiến giữa công lý và hỗn loạn.",
+        "view_count": 2200000,
+        "image_name": "the_dark_knight_poster.jpg"
+    },
+    {
+        "title": "The Lion King",
+        "genre": "Hoạt hình, Phiêu lưu",
+        "rating": 8.5,
+        "description": "Câu chuyện cảm động về Simba – vị vua sư tử tương lai.",
+        "view_count": 1300000,
+        "image_name": "lion_king_poster.jpg"
+    },
+    {
+        "title": "Frozen",
+        "genre": "Hoạt hình, Nhạc kịch",
+        "rating": 7.5,
+        "description": "Hành trình của hai chị em Elsa và Anna tại vương quốc băng giá.",
+        "view_count": 1900000,
+        "image_name": "frozen_poster.jpg"
+    },
+    {
+        "title": "Finding Nemo",
+        "genre": "Hoạt hình, Phiêu lưu",
+        "rating": 8.1,
+        "description": "Cuộc hành trình đầy cảm xúc của chú cá Marlin đi tìm con trai Nemo.",
+        "view_count": 1200000,
+        "image_name": "finding_nemo_poster.jpg"
+    },
+    {
+        "title": "Toy Story",
+        "genre": "Hoạt hình, Hài",
+        "rating": 8.3,
+        "description": "Những cuộc phiêu lưu bất tận của Woody, Buzz và nhóm đồ chơi.",
+        "view_count": 1600000,
+        "image_name": "toy_story_poster.jpg"
+    },
+    {
+        "title": "Doctor Strange",
+        "genre": "Hành động, Khoa học viễn tưởng",
+        "rating": 7.6,
+        "description": "Một bác sĩ thiên tài trở thành pháp sư tối thượng bảo vệ Trái Đất.",
+        "view_count": 1100000,
+        "image_name": "doctor_strange_poster.jpg"
+    },
+    {
+        "title": "Black Panther",
+        "genre": "Hành động, Phiêu lưu",
+        "rating": 7.3,
+        "description": "Vị vua trẻ T’Challa bảo vệ Wakanda khỏi thế lực đen tối.",
+        "view_count": 1400000,
+        "image_name": "black_panther_poster.jpeg"
+    },
+    {
+        "title": "Spider-Man: No Way Home",
+        "genre": "Hành động, Khoa học viễn tưởng",
+        "rating": 8.2,
+        "description": "Spider-Man đối mặt đa vũ trụ với nhiều kẻ thù từ thế giới khác.",
+        "view_count": 2300000,
+        "image_name": "spiderman_no_way_home_poster.jpg"
+    },
+    {
+        "title": "Shang-Chi",
+        "genre": "Hành động, Võ thuật",
+        "rating": 7.4,
+        "description": "Người hùng gốc Á với sức mạnh từ mười chiếc nhẫn truyền thuyết.",
+        "view_count": 950000,
+        "image_name": "shang_chi_poster.jpg"
+    },
+    {
+        "title": "Guardians of the Galaxy",
+        "genre": "Hành động, Hài",
+        "rating": 8.0,
+        "description": "Nhóm anh hùng vũ trụ quái dị nhưng đầy tình cảm.",
+        "view_count": 1250000,
+        "image_name": "guardians_of_galaxy_poster.jpg"
+    },
+    {
+        "title": "The Matrix",
+        "genre": "Hành động, Khoa học viễn tưởng",
+        "rating": 8.7,
+        "description": "Neo phát hiện thế giới anh sống chỉ là mô phỏng do máy móc tạo ra.",
+        "view_count": 2100000,
+        "image_name": "matrix_poster.jpg"
+    },
+    {
+        "title": "The Godfather",
+        "genre": "Tâm lý, Hình sự",
+        "rating": 9.2,
+        "description": "Câu chuyện về gia đình mafia Corleone quyền lực và bi kịch.",
+        "view_count": 1800000,
+        "image_name": "godfather_poster.jpg"
+    },
+    {
+        "title": "Forrest Gump",
+        "genre": "Tâm lý, Hài",
+        "rating": 8.8,
+        "description": "Hành trình phi thường của một người đàn ông đơn giản nhưng kiên cường.",
+        "view_count": 1750000,
+        "image_name": "forrest_gump_poster.jpg"
+    },
+    {
+        "title": "La La Land",
+        "genre": "Tình cảm, Nhạc kịch",
+        "rating": 8.0,
+        "description": "Chuyện tình lãng mạn đầy nghệ thuật giữa một nhạc sĩ và một diễn viên.",
+        "view_count": 1150000,
+        "image_name": "lalaland_poster.jpg"
+    },
+    {
+        "title": "The Shawshank Redemption",
+        "genre": "Tâm lý, Hình sự",
+        "rating": 9.3,
+        "description": "Một câu chuyện cảm động về niềm hy vọng trong nhà tù Shawshank.",
+        "view_count": 1950000,
+        "image_name": "shawshank_poster.jpg"
+    },
+    {
+        "title": "The Avengers",
+        "genre": "Hành động, Khoa học viễn tưởng",
+        "rating": 8.0,
+        "description": "Biệt đội siêu anh hùng hợp lực chống lại Loki và đội quân Chitauri.",
+        "view_count": 2100000,
+        "image_name": "avengers_poster.jpg"
+    },
+    {
+        "title": "Captain America: Civil War",
+        "genre": "Hành động, Phiêu lưu",
+        "rating": 7.8,
+        "description": "Cuộc chiến nội bộ căng thẳng giữa Captain America và Iron Man.",
+        "view_count": 1600000,
+        "image_name": "civil_war_poster.jpg"
+    },
+    {
+        "title": "Iron Man",
+        "genre": "Hành động, Khoa học viễn tưởng",
+        "rating": 7.9,
+        "description": "Tony Stark trở thành Iron Man với bộ giáp công nghệ tối tân.",
+        "view_count": 1700000,
+        "image_name": "ironman_poster.jpg"
+    },
+    {
+        "title": "Thor: Ragnarok",
+        "genre": "Hành động, Phiêu lưu",
+        "rating": 7.9,
+        "description": "Thor chống lại chị gái Hela để cứu Asgard khỏi diệt vong.",
+        "view_count": 1500000,
+        "image_name": "thor_ragnarok_poster.jpg"
+    },
+    {
+        "title": "Ant-Man",
+        "genre": "Hành động, Hài",
+        "rating": 7.3,
+        "description": "Một tên trộm trở thành siêu anh hùng với khả năng thu nhỏ đặc biệt.",
+        "view_count": 980000,
+        "image_name": "antman_poster.jpg"
+    },
+    {
+        "title": "Doctor Strange in the Multiverse of Madness",
+        "genre": "Hành động, Khoa học viễn tưởng",
+        "rating": 7.0,
+        "description": "Doctor Strange du hành đa vũ trụ với nhiều hiểm nguy khôn lường.",
+        "view_count": 1350000,
+        "image_name": "doctor_strange2_poster.jpg"
+    },
+    {
+        "title": "Dune",
+        "genre": "Khoa học viễn tưởng, Phiêu lưu",
+        "rating": 8.1,
+        "description": "Cuộc chiến tranh giành hành tinh sa mạc Arrakis đầy quyền lực và âm mưu.",
+        "view_count": 1250000,
+        "image_name": "dune_poster.jpg"
+    },
+    {
+        "title": "Oppenheimer",
+        "genre": "Tiểu sử, Tâm lý",
+        "rating": 8.6,
+        "description": "Câu chuyện về nhà khoa học J. Robert Oppenheimer và dự án Manhattan.",
+        "view_count": 1400000,
+        "image_name": "oppenheimer_poster.jpg"
+    },
+    {
+        "title": "Barbie",
+        "genre": "Hài, Phiêu lưu",
+        "rating": 7.0,
+        "description": "Một chuyến phiêu lưu kỳ thú trong thế giới của Barbie và Ken.",
+        "view_count": 1300000,
+        "image_name": "barbie_poster.jpg"
+    }
+]

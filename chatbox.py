@@ -1,23 +1,19 @@
 import ollama
 import streamlit as st
+import json
 
-# System prompt cho chủ đề AI Integration (bằng tiếng Việt)
-system_prompt = """
-Bạn là trợ lý tư vấn về AI Integration. Hãy giải thích rõ ràng, ngắn gọn bằng tiếng Việt các khái niệm liên quan như:
-- Basic Ollama model integration: Tích hợp mô hình Ollama cơ bản.
-- Prompt engineering fundamentals: Nguyên tắc cơ bản về kỹ thuật viết prompt.
-- AI safety considerations cơ bản: Các lưu ý an toàn AI cơ bản (như bias, hallucination).
-- Cost management cho AI services: Quản lý chi phí dịch vụ AI (ví dụ: token usage, chọn model rẻ).
-- OpenAI API integration cơ bản: Tích hợp OpenAI API đơn giản.
-- Các chủ đề khác như Simple chatbot implementation, Semantic Kernel introduction, hoặc bất kỳ câu hỏi liên quan đến AI Integration.
-Trả lời dựa trên kiến thức chung, giữ ngắn gọn và hữu ích. Nếu câu hỏi không liên quan, lịch sự từ chối.
-"""
+# Đọc dữ liệu phim
+with open("movies.json", "r", encoding="utf-8") as f:
+    movies_data = json.load(f)
+
+# System prompt bằng tiếng Việt, sử dụng key tiếng Anh
+system_prompt = f"Bạn là trợ lý gợi ý phim. Sử dụng dữ liệu sau để đề xuất phim: {json.dumps(movies_data)}. Hiểu và trả lời các câu hỏi tự nhiên bằng tiếng Việt, dựa trên genre, rating, hoặc từ khóa. Trả lời ngắn gọn."
 
 # Lưu lịch sử chat
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "system", "content": system_prompt}]
 
-st.title("Chatbot Tư Vấn AI Integration")
+st.title("Chatbot Gợi Ý Phim")
 
 # Hiển thị lịch sử chat
 for message in st.session_state.messages[1:]:
@@ -25,7 +21,7 @@ for message in st.session_state.messages[1:]:
         st.markdown(message["content"])
 
 # Input từ user
-if prompt := st.chat_input("Hỏi về AI Integration (VD: Giải thích OpenAI API integration cơ bản là gì?):"):
+if prompt := st.chat_input("Hỏi gì về phim (VD: Gợi ý phim hành động hay):"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
@@ -43,4 +39,4 @@ if prompt := st.chat_input("Hỏi về AI Integration (VD: Giải thích OpenAI 
     with st.chat_message("assistant"):
         st.markdown(ai_response)
 
-# Chạy: streamlit run E:\Cong_nghe_web\Al_Integration\chatbot.py
+# Chạy: streamlit run chatbot.py
