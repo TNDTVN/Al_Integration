@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, jsonify, session, Response
 import ollama
-import time  # Để simulate stream nếu cần
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'  # Để lưu session
@@ -20,10 +19,11 @@ Trả lời dựa trên kiến thức chung, giữ ngắn gọn và hữu ích. 
 
 @app.route('/')
 def index():
-    # Khởi tạo session messages nếu chưa có
-    if 'messages' not in session:
-        session['messages'] = [{"role": "system", "content": system_prompt}]
-    # Truyền lịch sử messages (bỏ system prompt) cho template để render ban đầu
+    # Xóa session messages để làm mới lịch sử chat khi refresh
+    session.pop('messages', None)
+    # Khởi tạo session messages mới
+    session['messages'] = [{"role": "system", "content": system_prompt}]
+    # Truyền lịch sử messages (bỏ system prompt) cho template
     history = session['messages'][1:]  # Bỏ system prompt
     return render_template('index.html', history=history)
 
@@ -36,37 +36,51 @@ def chat():
 
     # Thêm user message vào session
     session['messages'].append({"role": "user", "content": prompt})
+    session.modified = True  # Đánh dấu session đã thay đổi
 
     # Copy messages để sử dụng
     messages_copy = session['messages'][:]
 
     try:
-        # Gọi Ollama non-stream để lấy full response trước
-        full_response_data = ollama.chat(
+        # Gọi Ollama với stream=True
+        stream = ollama.chat(
             model="deepseek-v3.1:671b-cloud",
             messages=messages_copy,
-            stream=False
+            stream=True
         )
-        full_response = full_response_data['message']['content']
 
-        # Append full response vào session ngay (trong request context)
-        session['messages'].append(
-            {"role": "assistant", "content": full_response})
+        # Biến để tích lũy full response
+        full_response = ""
 
         def generate_response():
-            # Simulate stream bằng cách yield từng từ, giữ nguyên xuống dòng
-            # Split theo khoảng trắng và giữ \n
-            parts = full_response.split('\n')
-            for i, part in enumerate(parts):
-                words = part.split()
-                for word in words:
-                    yield word + ' '
-                    time.sleep(0.05)  # Delay nhỏ để simulate typing
-                if i < len(parts) - 1:  # Thêm \n giữa các dòng
-                    yield '\n'
+            nonlocal full_response
+            for chunk in stream:
+                content = chunk.get('message', {}).get('content', '')
+                full_response += content
+                # Yield chunk cho client ngay lập tức
+                yield content.encode('utf-8')
 
-        return Response(generate_response(), mimetype='text/plain')
+        # Tạo Response từ generator
+        response = Response(generate_response(), mimetype='text/plain')
+
+        # Lưu full_response vào session sau khi stream hoàn tất
+        def save_session():
+            # Sử dụng app.test_request_context với session hiện tại
+            with app.test_request_context():
+                # Tạo một bản sao của session để tránh KeyError
+                if 'messages' not in session:
+                    session['messages'] = [
+                        {"role": "system", "content": system_prompt}]
+                session['messages'].append(
+                    {"role": "assistant", "content": full_response})
+                session.modified = True
+
+        # Gọi save_session sau khi Response được xử lý
+        response.call_on_close(save_session)
+        return response
+
     except Exception as e:
+        print(f"Lỗi kết nối Ollama: {str(e)}")  # In lỗi chi tiết ra console
         return jsonify({'error': f'Lỗi kết nối server: {str(e)}'}), 500
 
 
