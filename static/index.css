@@ -475,3 +475,56 @@ body {
     max-width: none;
     padding: 0;
 }
+
+/* Thêm vào cuối file index.css */
+
+/* Header styling */
+.ai-header {
+    position: relative;
+}
+
+.header-center {
+    /* Đảm bảo tiêu đề luôn nằm giữa */
+    margin: 0 auto;
+    display: inline-block;
+}
+
+.header-right {
+    /* Đảm bảo nút luôn nằm góc phải */
+    z-index: 10;
+}
+
+/* Style cho Cost Dashboard button trong header */
+.ai-header .btn-outline-light {
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.ai-header .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-1px);
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+    .header-center h1 {
+        font-size: 1.5rem;
+    }
+
+    .header-center p {
+        font-size: 0.9rem;
+    }
+
+    .header-right {
+        position: static !important;
+        transform: none !important;
+        margin-top: 10px;
+    }
+
+    .ai-header .container {
+        text-align: center;
+    }
+}

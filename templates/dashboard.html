@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Cost Management Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .stat-card {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .cost-badge {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-wrapper {
+            flex: 1;
+            min-height: 300px;
+            position: relative;
+        }
+
+        .nav-link.active {
+            font-weight: bold;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .equal-height-row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .equal-height-row>[class*='col-'] {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg dashboard-header">
+        <div class="container">
+            <a class="navbar-brand text-white" href="#">
+                <i class="bi bi-graph-up"></i> AI Cost Management Dashboard
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link text-white" href="/">
+                    <i class="bi bi-robot"></i> Chat Assistant
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stat-card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Tổng chi phí</h6>
+                                <h3 class="cost-badge" id="total-cost">$0.00</h3>
+                            </div>
+                            <i class="bi bi-currency-dollar display-6 opacity-50"></i>
+                        </div>
+                        <small>30 ngày qua</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Tổng tokens</h6>
+                                <h3 class="cost-badge" id="total-tokens">0</h3>
+                            </div>
+                            <i class="bi bi-hash display-6 opacity-50"></i>
+                        </div>
+                        <small>30 ngày qua</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card bg-warning text-dark">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Số request</h6>
+                                <h3 class="cost-badge" id="total-requests">0</h3>
+                            </div>
+                            <i class="bi bi-chat-dots display-6 opacity-50"></i>
+                        </div>
+                        <small>30 ngày qua</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Models</h6>
+                                <h3 class="cost-badge" id="total-models">0</h3>
+                            </div>
+                            <i class="bi bi-cpu display-6 opacity-50"></i>
+                        </div>
+                        <small>Đang hoạt động</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts - Sửa lại để có chiều cao bằng nhau -->
+        <div class="row equal-height-row">
+            <div class="col-md-8">
+                <div class="chart-container">
+                    <h5>Chi phí theo thời gian</h5>
+                    <div class="chart-wrapper">
+                        <canvas id="costChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="chart-container">
+                    <h5>Chi phí theo model</h5>
+                    <div class="chart-wrapper">
+                        <canvas id="modelChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Models Management -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="chart-container">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>Quản lý Models</h5>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addModelModal">
+                            <i class="bi bi-plus-circle"></i> Thêm Model
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Tên Model</th>
+                                    <th>Chi phí/token</th>
+                                    <th>Mô tả</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày tạo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="models-table">
+                                <!-- Models will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Model Modal -->
+    <div class="modal fade" id="addModelModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm Model Mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addModelForm">
+                        <div class="mb-3">
+                            <label class="form-label">Tên Model</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Chi phí mỗi token ($)</label>
+                            <input type="number" step="0.000001" class="form-control" name="cost_per_token"
+                                value="0.00002" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mô tả</label>
+                            <textarea class="form-control" name="description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="addModel()">Thêm Model</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+
+</html>
